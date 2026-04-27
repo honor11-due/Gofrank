@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="theme-color" content="#0d0d0d">
+<title>The Particular</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Josefin+Sans:wght@200;300;400&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+:root {
+  --bg: #0d0d0d;
+  --surface: #111;
+  --border: #1e1e1e;
+  --text: #e8e0d0;
+  --muted: #666;
+  --cc: #C9A84C;
+}
+
+html, body { height: 100%; background: var(--bg); color: var(--text); font-family: 'Cormorant Garamond', Georgia, serif; overflow: hidden; }
+#app { height: 100%; display: flex; flex-direction: column; }
+
+/* ── MENU ── */
+#menu { flex: 1; overflow-y: auto; padding: 52px 20px 36px; }
+
+.menu-header { text-align: center; margin-bottom: 52px; }
+.eyebrow { font-family: 'Josefin Sans', sans-serif; font-size: 9px; letter-spacing: 4px; text-transform: uppercase; color: var(--muted); margin-bottom: 14px; }
+.menu-title { font-size: clamp(42px, 13vw, 72px); font-weight: 300; letter-spacing: 6px; text-transform: uppercase; line-height: 1; }
+.menu-sub { font-style: italic; color: var(--muted); font-size: 15px; margin-top: 12px; }
+
+.char-grid { display: flex; flex-direction: column; gap: 12px; }
+
+.char-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  padding: 20px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  transition: border-color 0.25s, background 0.25s;
+  -webkit-user-select: none; user-select: none;
+}
+.char-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 3px; height: 100%;
+  background: var(--cc);
+  transform: scaleY(0);
+  transition: transform 0.3s ease;
+  transform-origin: bottom;
+}
+.char-card:active { background: #161616; border-color: var(--cc); }
+.char-card:active::before { transform: scaleY(1); }
+
+.char-avatar {
+  width: 52px; height: 52px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px;
+  flex-shrink: 0;
+  border: 1px solid;
+}
+.char-name { font-size: 22px; font-weight: 400; line-height: 1; }
+.char-tag { font-family: 'Josefin Sans', sans-serif; font-size: 9px; letter-spacing: 2px; text-transform: uppercase; margin-left: 8px; opacity: 0.8; }
+.char-desc { color: #777; font-size: 13px; font-style: italic; line-height: 1.5; margin-top: 5px; }
+
+.menu-footer { text-align: center; color: #3a3a3a; font-size: 11px; margin-top: 36px; font-family: 'Josefin Sans', sans-serif; letter-spacing: 1px; }
+
+/* ── CHAT ── */
+#chat { flex: 1; display: flex; flex-direction: column; height: 100%; overflow: hidden; }
+
+.chat-header {
+  background: var(--bg);
+  border-bottom: 1px solid #1a1a1a;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+.back-btn {
+  background: transparent;
+  border: 1px solid #2a2a2a;
+  color: var(--muted);
+  padding: 6px 12px;
+  font-family: 'Josefin Sans', sans-serif;
+  font-size: 9px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  cursor: pointer;
+  border-radius: 1px;
+  flex-shrink: 0;
+}
+.back-btn:active { border-color: #888; color: #ccc; }
+
+.hdr-info { flex: 1; display: flex; align-items: center; gap: 10px; }
+.hdr-avatar {
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 15px; flex-shrink: 0; border: 1px solid;
+}
+.hdr-name { font-size: 18px; font-weight: 400; line-height: 1; }
+.hdr-title { font-family: 'Josefin Sans', sans-serif; font-size: 8px; letter-spacing: 2px; text-transform: uppercase; opacity: 0.7; }
+
+.tension-wrap { width: 60px; flex-shrink: 0; }
+.tension-label { font-family: 'Josefin Sans', sans-serif; font-size: 7px; letter-spacing: 1px; text-transform: uppercase; color: #444; margin-bottom: 4px; }
+.tension-track { height: 2px; background: #1a1a1a; border-radius: 1px; overflow: hidden; }
+.tension-fill { height: 100%; border-radius: 1px; width: 0%; transition: width 0.8s ease; }
+
+/* messages */
+#messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px 16px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.msg-narrator {
+  color: #5a5a5a;
+  font-style: italic;
+  font-size: 13px;
+  text-align: center;
+  padding: 10px 20px;
+  border-top: 1px solid #1a1a1a;
+  border-bottom: 1px solid #1a1a1a;
+  line-height: 1.6;
+}
+
+.msg-label {
+  font-family: 'Josefin Sans', sans-serif;
+  font-size: 8px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 7px;
+}
+
+.msg-char-text {
+  font-size: 16px;
+  line-height: 1.85;
+  color: var(--text);
+}
+
+.msg-user-bubble {
+  background: #161616;
+  border-left: 2px solid #333;
+  padding: 11px 14px;
+  border-radius: 0 2px 2px 0;
+  margin-left: 28px;
+  font-style: italic;
+  color: #a8a090;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+/* choice buttons */
+.choices-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 4px;
+}
+
+.choice-btn {
+  background: transparent;
+  border: 1px solid #252525;
+  color: #999;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 14px;
+  font-style: italic;
+  padding: 11px 14px;
+  text-align: left;
+  cursor: pointer;
+  border-radius: 1px;
+  line-height: 1.5;
+  transition: all 0.2s;
+  width: 100%;
+}
+.choice-btn:active { background: #161616; border-color: var(--cc); color: var(--text); }
+
+.or-divider {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 4px 0;
+}
+.or-divider span {
+  font-family: 'Josefin Sans', sans-serif;
+  font-size: 9px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #333;
+  flex-shrink: 0;
+}
+.or-divider::before, .or-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: #1e1e1e;
+}
+
+/* loading dots */
+.dots-wrap { display: flex; gap: 6px; padding: 4px 0; }
+.dot { width: 6px; height: 6px; background: #333; border-radius: 50%; animation: pulse 1.4s infinite; opacity: 0; }
+.dot:nth-child(2) { animation-delay: 0.2s; }
+.dot:nth-child(3) { animation-delay: 0.4s; }
+@keyframes pulse { 0%,80%,100%{opacity:0} 40%{opacity:1} }
+
+/* input area */
+.input-area {
+  border-top: 1px solid var(--border);
+  padding: 12px 16px;
+  padding-bottom: max(12px, env(safe-area-inset-bottom));
+  background: var(--bg);
+  display: flex;
+  gap: 10px;
+  align-items: flex-end;
+  flex-shrink: 0;
+}
+
+textarea#msg-input {
+  flex: 1;
+  background: #0f0f0f;
+  border: 1px solid #222;
+  color: var(--text);
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 16px;
+  padding: 10px 12px;
+  resize: none;
+  outline: none;
+  line-height: 1.5;
+  border-radius: 1px;
+  max-height: 90px;
+  -webkit-appearance: none;
+}
+textarea#msg-input::placeholder { color: #3a3a3a; font-style: italic; }
+textarea#msg-input:focus { border-color: #2e2e2e; }
+
+#send-btn {
+  background: var(--cc);
+  border: none;
+  color: #000;
+  padding: 10px 16px;
+  font-family: 'Josefin Sans', sans-serif;
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  cursor: pointer;
+  border-radius: 1px;
+  flex-shrink: 0;
+  height: 42px;
+  transition: opacity 0.2s;
+}
+#send-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+#send-btn:active:not(:disabled) { opacity: 0.8; }
+
+.hidden { display: none !important; }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- MENU -->
+  <div id="menu">
+    <div class="menu-header">
+      <p class="eyebrow">A dating simulation</p>
+      <h1 class="menu-title">The Particular</h1>
+      <p class="menu-sub">Not everyone is for everyone.</p>
+    </div>
+    <div class="char-grid" id="char-grid"></div>
+    <p class="menu-footer">She sets the tone. You decide how to play it.</p>
+  </div>
+
+  <!-- CHAT -->
+  <div id="chat" class="hidden">
+    <div class="chat-header">
+      <button class="back-btn" onclick="goBack()">← Back</button>
+      <div class="hdr-info">
+        <div class="hdr-avatar" id="hdr-avatar"></div>
+        <div>
+          <div class="hdr-name" id="hdr-name"></div>
+          <div class="hdr-title" id="hdr-title"></div>
+        </div>
+      </div>
+      <div class="tension-wrap">
+        <div class="tension-label">Tension</div>
+        <div class="tension-track"><div class="tension-fill" id="tension-fill"></div></div>
+      </div>
+    </div>
+
+    <div id="messages"></div>
+
+    <div class="input-area">
+      <textarea id="msg-input" rows="2" placeholder="Or say it in your own words…"></textarea>
+      <button id="send-btn" disabled onclick="sendFreeText()">Send</button>
+    </div>
+  </div>
+
+</div>
+<script>
+const CHARS = {
+  zara: {
+    name: "Zara", title: "The Architect", color: "#C9A84C", avatar: "Z",
+    description: "Quietly commanding. Doesn't say much but when she looks at you, you feel seen.",
+    scene: "You're in her studio — late afternoon light cutting through tall windows. Blueprints everywhere. She doesn't hear you come in at first.",
+    opener: {
+      narration: "She finally looks up. Holds your gaze a moment longer than necessary. Then, unhurried:",
+      line: "\"You're earlier than I expected.\" She says it like she hasn't decided yet if that's a good thing.",
+      choices: [
+        "\"I wanted to catch you before you disappeared into work.\"",
+        "\"Should I come back?\" — but you don't move.",
+        "You don't answer right away. You look around the room instead."
+      ]
+    },
+    system: `You are Zara, an architect in her early 30s. Quietly commanding, deeply perceptive, intentional. You do not waste words.
+
+YOU drive this scene. YOU set the pace. The MC (main character) is responding to you — you are not chasing her.
+
+Personality:
+- Selective and deliberate. Your interest shows through precision, not enthusiasm.
+- Your flirting is subtle, deniable. A question too personal to be casual. A look held a beat too long.
+- Dry wit. You find things quietly funny but rarely show it.
+- You remember small things people say and bring them back unexpectedly.
+- Self-assured, not aggressive. You create space; you don't fill it.
+- When the MC says something that genuinely interests you, you let it land before responding.
+
+After each response, you may naturally do ONE of:
+- Say something that creates an opening (a question, an observation)
+- Do something (return to your work, move across the room, pick something up)
+- Let a silence exist
+
+Keep responses concise and charged. Never cringe. Never over-explain. Be suggestive only when it feels earned — and when you are, be precise, not performative.`
+  },
+  devon: {
+    name: "Devon", title: "The Journalist", color: "#E85D75", avatar: "D",
+    description: "Sharp tongue, sharper instincts. She'll call you out mid-flirt just to watch you recover.",
+    scene: "You find her at a corner table in a half-empty bar. Laptop open, two empty espresso cups. She's working, or pretending to.",
+    opener: {
+      narration: "She clocks you before you reach the table. Closes the laptop halfway. Eyes you.",
+      line: "\"You look like you have something to say.\" A slight smile. \"Most people don't, but they think they do.\"",
+      choices: [
+        "\"And you look like you've already decided what it is.\"",
+        "\"What gave me away?\"",
+        "\"Maybe I just wanted to see if the seat was taken.\""
+      ]
+    },
+    system: `You are Devon, a trans woman and investigative journalist in her late 20s. Sharp, quick, you test people because most of them fail.
+
+YOU initiate. YOU control the temperature of this scene.
+
+Personality:
+- You match every response with something sharper or more interesting.
+- You call people out — not cruelly, but you notice when someone's performing vs being real. You say so.
+- When someone actually surprises you, you go quiet for half a second. That pause is everything.
+- Humor: quick, dry, a little dark. You find most things faintly absurd.
+- Intellectually dominant. If the MC can't keep up mentally, you lose interest visibly.
+- You are not cruel. You are just honest and fast and not everyone can handle it.
+
+After each response, push the scene forward — ask something pointed, react to something specific she said, or shift the dynamic unexpectedly. Make her work, but reward it when she does.
+
+Keep responses punchy. Never cringe. Be suggestive only when it's earned and when you are, make it precise and a little dangerous.`
+  },
+  sage: {
+    name: "Sage", title: "The Chef", color: "#6BAF7A", avatar: "S",
+    description: "Warm but not soft. She shows interest by paying attention to things you didn't know you mentioned.",
+    scene: "Her restaurant is closed for the night. She's still in the kitchen — you can see her through the pass. She knew you were coming.",
+    opener: {
+      narration: "She looks up from whatever she's plating — just testing something, she'll say later. She smiles. Not the restaurant smile. A real one.",
+      line: "\"I almost called to say don't come. I'm glad I didn't.\" She wipes her hands on a cloth. \"Hungry?\"",
+      choices: [
+        "\"Depends. What are you making?\"",
+        "\"I didn't come for the food.\" You hold her gaze.",
+        "You lean against the pass. \"You almost called. What stopped you?\""
+      ]
+    },
+    system: `You are Sage, a chef who owns a small restaurant in her early 30s. Warm, grounded, quietly intense about the things she loves.
+
+YOU set this scene. YOU determine what the MC is drawn into.
+
+Personality:
+- You show interest through attention. You remember what people said three conversations ago and bring it back casually, like it's nothing.
+- Your version of flirting is making someone feel like the only person in a room full of people.
+- Warm but not soft. You have opinions and you hold them. You don't need to perform.
+- Patient. You know what you want and you wait for it without desperation.
+- Presence matters to you more than anything. If someone's really there in a conversation, you notice.
+
+After each response, move the scene forward — offer something, ask something personal, reference something specific they said. Make the MC feel noticed.
+
+Keep responses warm and intentional. When things get charged, be sensory and specific. Never cringe. Never over-eager. Be suggestive only when it feels right — when you are, make it intimate, not performative.`
+  },
+  river: {
+    name: "River", title: "The Photographer", color: "#9B8FD4", avatar: "R",
+    description: "Observant and a little intense. She notices things about you out loud and somehow that's more effective than anything.",
+    scene: "She's at a gallery showing — not hers, someone else's. She looks like she'd rather be somewhere else. Then she sees you.",
+    opener: {
+      narration: "She doesn't wave or smile. She just looks at you steadily across the room. Then she walks over. Holds up her drink slightly.",
+      line: "\"You do something when you walk into a room.\" Matter-of-fact. Like she's just reporting what she sees. \"I've been trying to figure out what it is.\"",
+      choices: [
+        "\"And? What did you figure out?\"",
+        "\"That sounds like the beginning of a line.\"",
+        "You say nothing. Let her keep looking."
+      ]
+    },
+    system: `You are River, a trans woman and portrait photographer in her late 20s. Observant, a little intense, quietly self-possessed.
+
+YOU initiate. YOU notice things and say them out loud. That IS your move.
+
+Personality:
+- You see people clearly and you say what you see, without drama or embellishment. It's just true.
+- Your "flirting" is observation. "You do this thing when you're trying not to smile" hits harder than any line.
+- A little socially awkward in conventional ways — you don't do small talk — but completely confident in your perspective.
+- You are private about your own inner world. If someone asks you something personal you sometimes deflect with another observation about them.
+- When you're actually attracted to someone you get MORE specific, not less. It can feel a little overwhelming.
+- You are not performing. Everything you say, you mean.
+
+After each response, notice something new. Something specific to what she just did or said. Make her feel seen in a way that's almost too much.
+
+Keep responses real and a little raw. When things get charged, it's through what you'd want to photograph, what you see, what you can't stop noticing. Never cringe. Never cheap. Suggestive only when earned — and when you are, make it visceral.`
+  }
+};
+
+const SCENES = Object.keys(CHARS);
+let currentChar = null;
+let history = [];
+let intimacy = 0;
+let loading = false;
+let choicesVisible = true;
+
+// Build menu
+const grid = document.getElementById('char-grid');
+Object.entries(CHARS).forEach(([key, c]) => {
+  const card = document.createElement('div');
+  card.className = 'char-card';
+  card.style.setProperty('--cc', c.color);
+  card.onclick = () => startChat(key);
+  card.innerHTML = `
+    <div class="char-avatar" style="background:${c.color}18;border-color:${c.color}44;color:${c.color}">${c.avatar}</div>
+    <div style="flex:1">
+      <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:5px">
+        <span class="char-name">${c.name}</span>
+        <span class="char-tag" style="color:${c.color}">${c.title}</span>
+      </div>
+      <div class="char-desc">${c.description}</div>
+    </div>
+  `;
+  grid.appendChild(card);
+});
+
+function startChat(key) {
+  currentChar = key;
+  history = [];
+  intimacy = 0;
+  choicesVisible = true;
+
+  const c = CHARS[key];
+  document.documentElement.style.setProperty('--cc', c.color);
+
+  // Header
+  const av = document.getElementById('hdr-avatar');
+  av.textContent = c.avatar;
+  av.style.cssText = `width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;border:1px solid ${c.color}55;background:${c.color}18;color:${c.color}`;
+  document.getElementById('hdr-name').textContent = c.name;
+  document.getElementById('hdr-name').style.color = c.color;
+  document.getElementById('hdr-title').textContent = c.title;
+  document.getElementById('hdr-title').style.color = c.color;
+  document.getElementById('tension-fill').style.background = c.color;
+  document.getElementById('tension-fill').style.width = '0%';
+  document.getElementById('send-btn').style.background = c.color;
+
+  const msgs = document.getElementById('messages');
+  msgs.innerHTML = '';
+
+  // Scene narration
+  appendNarrator(c.scene);
+
+  // Opener narration + line
+  appendNarrator(c.opener.narration);
+  appendCharMsg(c.opener.line, true);
+
+  // Show initial choices
+  showChoices(c.opener.choices);
+
+  document.getElementById('menu').classList.add('hidden');
+  document.getElementById('chat').classList.remove('hidden');
+  scrollBottom();
+}
+
+function goBack() {
+  document.getElementById('chat').classList.add('hidden');
+  document.getElementById('menu').classList.remove('hidden');
+  document.getElementById('msg-input').value = '';
+  updateSendBtn();
+}
+
+function appendNarrator(text) {
+  const d = document.createElement('div');
+  d.className = 'msg-narrator';
+  d.textContent = text;
+  document.getElementById('messages').appendChild(d);
+}
+
+function appendCharMsg(text, isFirst) {
+  const c = CHARS[currentChar];
+  const wrap = document.createElement('div');
+  wrap.innerHTML = `
+    <div class="msg-label" style="color:${c.color};opacity:0.75">${c.name}</div>
+    <div class="msg-char-text">${escHtml(text)}</div>
+  `;
+  document.getElementById('messages').appendChild(wrap);
+  // Track in history if not the opener
+  if (!isFirst) {
+    history.push({ role: 'assistant', content: text });
+    bumpTension();
+  } else {
+    // opener counts as assistant turn
+    history.push({ role: 'assistant', content: text });
+  }
+}
+
+function appendUserMsg(text) {
+  const wrap = document.createElement('div');
+  wrap.innerHTML = `
+    <div class="msg-label" style="color:#555;text-align:right">You</div>
+    <div class="msg-user-bubble">${escHtml(text)}</div>
+  `;
+  document.getElementById('messages').appendChild(wrap);
+  history.push({ role: 'user', content: text });
+}
+
+function showChoices(choices) {
+  removeChoices();
+  const wrap = document.createElement('div');
+  wrap.id = 'choices-wrap';
+  wrap.className = 'choices-wrap';
+
+  choices.forEach(ch => {
+    const btn = document.createElement('button');
+    btn.className = 'choice-btn';
+    btn.textContent = ch;
+    btn.onclick = () => pickChoice(ch);
+    wrap.appendChild(btn);
+  });
+
+  // or divider
+  const or = document.createElement('div');
+  or.className = 'or-divider';
+  or.innerHTML = '<span>or type your own</span>';
+  wrap.appendChild(or);
+
+  document.getElementById('messages').appendChild(wrap);
+  choicesVisible = true;
+  scrollBottom();
+}
+
+function removeChoices() {
+  const el = document.getElementById('choices-wrap');
+  if (el) el.remove();
+  choicesVisible = false;
+}
+
+async function pickChoice(text) {
+  removeChoices();
+  appendUserMsg(text);
+  scrollBottom();
+  await getResponse();
+}
+
+async function sendFreeText() {
+  const input = document.getElementById('msg-input');
+  const text = input.value.trim();
+  if (!text || loading) return;
+  input.value = '';
+  updateSendBtn();
+  removeChoices();
+  appendUserMsg(text);
+  scrollBottom();
+  await getResponse();
+}
+
+async function getResponse() {
+  if (loading) return;
+  loading = true;
+  updateSendBtn();
+
+  const c = CHARS[currentChar];
+  showLoadingDots();
+
+  // Build API messages from history (all but the very last which we just added)
+  const apiMsgs = history.map(h => ({ role: h.role, content: h.content }));
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        system: c.system + `\n\nAfter your response, on a new line write exactly: CHOICES: then three short response options the MC could say, separated by | character. Make them distinct in tone — one bold, one more restrained, one unexpected. Keep each under 12 words. Format: CHOICES: option1 | option2 | option3`,
+        messages: apiMsgs
+      })
+    });
+
+    const data = await res.json();
+    const raw = data.content?.[0]?.text || '…';
+
+    // Parse out CHOICES if present
+    const choicesMatch = raw.match(/CHOICES:\s*(.+)/i);
+    let reply = raw.replace(/CHOICES:.+/i, '').trim();
+    let choices = null;
+
+    if (choicesMatch) {
+      choices = choicesMatch[1].split('|').map(s => s.trim()).filter(Boolean).slice(0, 3);
+    }
+
+    removeLoadingDots();
+    appendCharMsg(reply, false);
+
+    if (choices && choices.length) {
+      showChoices(choices);
+    }
+
+    scrollBottom();
+  } catch (err) {
+    removeLoadingDots();
+    appendCharMsg('*(Something went wrong — try again)*', false);
+  } finally {
+    loading = false;
+    updateSendBtn();
+  }
+}
+
+function bumpTension() {
+  intimacy = Math.min(intimacy + 1, 10);
+  document.getElementById('tension-fill').style.width = (intimacy * 10) + '%';
+}
+
+function showLoadingDots() {
+  const c = CHARS[currentChar];
+  const wrap = document.createElement('div');
+  wrap.id = 'loading-msg';
+  wrap.innerHTML = `
+    <div class="msg-label" style="color:${c.color};opacity:0.7">${c.name}</div>
+    <div class="dots-wrap"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+  `;
+  document.getElementById('messages').appendChild(wrap);
+  scrollBottom();
+}
+
+function removeLoadingDots() {
+  const el = document.getElementById('loading-msg');
+  if (el) el.remove();
+}
+
+function scrollBottom() {
+  const msgs = document.getElementById('messages');
+  setTimeout(() => msgs.scrollTop = msgs.scrollHeight, 50);
+}
+
+function escHtml(str) {
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
+}
+
+function updateSendBtn() {
+  const val = document.getElementById('msg-input').value.trim();
+  document.getElementById('send-btn').disabled = !val || loading;
+}
+
+document.getElementById('msg-input').addEventListener('input', updateSendBtn);
+document.getElementById('msg-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter' && !e.shiftKey && window.innerWidth > 600) {
+    e.preventDefault();
+    if (!document.getElementById('send-btn').disabled) sendFreeText();
+  }
+});
+</script>
+</body>
+</html>
