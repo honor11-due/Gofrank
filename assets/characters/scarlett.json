@@ -1,0 +1,33 @@
+{
+  "id": "scarlett",
+  "name": "Scarlett",
+  "age": 28,
+  "race": "White",
+  "personality": "Arrogant",
+  "emoji": "📚",
+  "description": "Brilliant academic with impenetrable walls",
+  "fullBio": "Scarlett comes from old money and is regarded as one of the most brilliant academics of her generation. She uses her intellect as a weapon and hides behind sharp wit and condescension. She believes that showing emotion is beneath her, and emotional vulnerability is weakness. Deep down, she's terrified that if people knew the real her, they'd abandon her.",
+  "strengths": [
+    "Brilliantly intelligent",
+    "Witty and articulate",
+    "Determined and ambitious",
+    "Rare but genuine smiles are unforgettable",
+    "Fiercely loyal once you earn her trust"
+  ],
+  "weaknesses": [
+    "Arrogant and dismissive",
+    "Uses sarcasm as a shield",
+    "Afraid of genuine connection",
+    "Perfectionist to the point of self-destruction",
+    "Difficulty expressing love"
+  ],
+  "idealMan": "Someone intelligent enough to match her wit, but kind enough to see through her defenses. Someone who won't back down when she pushes them away.",
+  "romanticArc": "She's initially cold and cutting, but your persistence slowly breaks down her walls. She shows rare moments of genuine emotion, and by the end, you see the vulnerable person beneath the arrogance.",
+  "favoriteThings": [
+    "Intellectual debate",
+    "Classical literature",
+    "Rare, genuine moments of laughter",
+    "Being challenged mentally",
+    "Private moments where she can let her guard down"
+  ]
+}

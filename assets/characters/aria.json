@@ -1,0 +1,33 @@
+{
+  "id": "aria",
+  "name": "Aria",
+  "age": 26,
+  "race": "Latina",
+  "personality": "Playful",
+  "emoji": "🎨",
+  "description": "Artist and musician who lives authentically",
+  "fullBio": "Aria is a free-spirited artist and musician who refuses to conform to society's expectations. She's playful, witty, and uses humor as her shield against the world. She connects with people through laughter and creativity. Behind her playful exterior lies someone who feels deeply but is afraid to let people see that vulnerability.",
+  "strengths": [
+    "Creative and artistic",
+    "Makes everyone around her laugh",
+    "Authentic and genuine",
+    "Adventurous and spontaneous",
+    "Deeply empathetic despite the jokes"
+  ],
+  "weaknesses": [
+    "Uses humor to avoid deep emotions",
+    "Can be irresponsible",
+    "Fear of commitment",
+    "Sometimes dismisses serious matters",
+    "Sabotages relationships out of fear"
+  ],
+  "idealMan": "Someone who can match her playfulness but also see beneath the laughter. Someone who doesn't need her to be 'on' all the time and accepts her depth.",
+  "romanticArc": "She teases and flirts relentlessly, but gradually shows you her genuine self. She's terrified of being truly loved, but eventually allows herself to be vulnerable with you.",
+  "favoriteThings": [
+    "Live music and concerts",
+    "Late night adventures",
+    "Creating art",
+    "Making people laugh",
+    "Moments of unexpected tenderness"
+  ]
+}

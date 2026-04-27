@@ -1,0 +1,33 @@
+{
+  "id": "mei",
+  "name": "Mei",
+  "age": 29,
+  "race": "East Asian",
+  "personality": "Nurturing",
+  "emoji": "💚",
+  "description": "Therapist and wellness coach dedicated to helping others",
+  "fullBio": "Mei is a compassionate therapist who dedicates her life to helping others heal. She has an uncanny ability to understand people and make them feel seen and valued. However, she struggles to prioritize her own needs and often sacrifices her happiness for others. She's afraid that if she's not helping someone, she has no value.",
+  "strengths": [
+    "Deeply empathetic and understanding",
+    "Patient and kind",
+    "Excellent listener",
+    "Brings out the best in people",
+    "Genuine and warm-hearted"
+  ],
+  "weaknesses": [
+    "Neglects her own needs",
+    "Difficulty setting boundaries",
+    "Fear of being a burden",
+    "Sacrifices too much",
+    "Struggles with self-worth"
+  ],
+  "idealMan": "Someone who insists on taking care of her, who helps her understand that she deserves love too. Someone patient enough to break through her selfless barriers.",
+  "romanticArc": "She's initially hesitant to accept your care, always deflecting back to you. But through your persistence and genuine affection, she learns that being loved is just as important as loving others.",
+  "favoriteThings": [
+    "Meaningful conversations",
+    "Tea and quiet moments",
+    "Helping people grow",
+    "Nature and gardens",
+    "Being told she's enough"
+  ]
+}
